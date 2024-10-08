@@ -1,0 +1,5 @@
+services:
+  api-bixi:
+    build: ./api/
+    ports:
+      - "3002:3002"
