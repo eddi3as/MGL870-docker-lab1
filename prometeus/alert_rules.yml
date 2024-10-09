@@ -19,3 +19,10 @@ groups:
     annotations:
       summary: "High request latency on {{ $labels.instance }}"
       description: "{{ $labels.instance }} has a median request latency above 1s (current value: {{ $value }}s)"
+
+  # Alert for any instance that has a median request latency >1s.
+  - alert: MongoDBLatency
+    expr: bixi_db_response_time_duration_seconds_sum{job="node-bixi"} > 1
+    annotations:
+      summary: "High request latency on {{ $labels.instance }}"
+      description: "{{ $labels.instance }} has a median request latency above 1s (current value: {{ $value }}s)"
