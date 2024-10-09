@@ -9,7 +9,7 @@ import client from "prom-client";
 
 const path = __dirname + '/views/';
 const corsOptions = {
-  origin: "*"//maybe 3000 || 3001 for the API
+  origin: "*"
 };
 
 const register = new client.Registry();
@@ -73,3 +73,8 @@ class App {
 }
 
 export default new App().expressApp;
+/*
+
+    extra_hosts:
+      host.docker.internal: host-gateway
+*/

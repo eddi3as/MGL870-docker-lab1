@@ -4,7 +4,6 @@ import { Utils } from '../utils/utils';
 import { databaseResponseTimeHistogram } from "../utils/metrics";
 import { l_log } from "../utils/logger";
 
-
 export class CompteurRouter {
   private _router: Router;
   private _cmptCtrl: CompteurCtrl;
