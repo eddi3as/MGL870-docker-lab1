@@ -4,6 +4,10 @@ services:
     container_name: apibixi
     ports:
       - 3002:3002
+    depends_on:
+      - loki
+      - jaeger
+      - prometheus
 
   prometheus:
     image: prom/prometheus
@@ -28,6 +32,8 @@ services:
       - 3000:3000
     volumes:
       - grafana-data:/var/lib/grafana
+    depends_on:
+      - loki
 
   cadvisor:
     image: google/cadvisor
@@ -39,6 +45,33 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     ports:
       - 8080:8080
+
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otelcol
+    command: ["--config=/etc/otel-config.yaml"]
+    volumes:
+      - ./otel/otel-config.yaml:/etc/otel-config.yaml
+    ports:
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP gRPC receiver
+
+  loki:
+    image: grafana/loki:main
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/loki-config.yaml
+    command: -config.file=/etc/loki/loki-config.yaml
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "6831:6831/udp" # UDP port for Jaeger agent
+      - "16686:16686" # Web UI
+      - "14268:14268" # HTTP port for spans
 
 volumes:
   grafana-data:
