@@ -2,23 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { CompteurCtrl } from '../controller/compteurCtrl'
 import { Utils } from '../utils/utils';
 import { databaseResponseTimeHistogram } from "../utils/metrics";
-
-import { createLogger, transports, format } from "winston";
-import LokiTransport from "winston-loki";
-
-const l_log = createLogger({
-  transports: [new LokiTransport({
-      host: "http://loki:3100",
-      labels: { app: 'nodejs-bixi'},
-      json: true,
-      format: format.json(),
-      replaceTimestamp: true,
-      onConnectionError: (err) => console.error(err)
-    }),
-    new transports.Console({
-      format: format.combine(format.simple(), format.colorize())
-    })]
-})
+import { l_log } from "../utils/logger";
 
 
 export class CompteurRouter {
@@ -55,11 +39,10 @@ export class CompteurRouter {
 
     try{
       results = await this._cmptCtrl.getCompteur(filter, limit);
-      l_log.info({ message: `Hello World`, labels: { 'origin': 'getAllCompteurs' } })
       timer({ ...metricsLabels, success: "true" });
     }catch(e){
       timer({ ...metricsLabels, success: "false" });
-      l_log.info({ message: `Hello World`, labels: { 'origin': 'getAllCompteurs' } })
+      l_log.error({ message: e , origin: 'getAllCompteurs', params: req.url.toString() });
       throw e;
     }
     res.status(200)
@@ -85,6 +68,7 @@ export class CompteurRouter {
       timer({ ...metricsLabels, success: "true" });
     }catch(e){
       timer({ ...metricsLabels, success: "false" });
+      l_log.error({ message: e , origin: 'getCompteurID ', params: req.url.toString() });
       throw e;
     }
 
@@ -119,6 +103,7 @@ export class CompteurRouter {
       timer({ ...metricsLabels, success: "true" });
     }catch(e){
       timer({ ...metricsLabels, success: "false" });
+      l_log.error({ message: e , origin: 'getCompteurStats ', params: req.url.toString()});
       throw e;
     }
 
