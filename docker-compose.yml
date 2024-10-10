@@ -1,4 +1,4 @@
-name: apigateway-add-lab1
+name: lab1-api-otel
 services:
   api-gateway:
     build: ./api/
@@ -12,6 +12,19 @@ services:
       - jaeger
       - prometheus
       - api-bixi
+      - api-auth
+
+  api-auth:
+    build: ./auth/
+    container_name: apiauth
+    environment:
+      JAEGER_URI: ${JAEG_URI}
+    ports:
+      - 4001:4001
+    depends_on:
+      - loki
+      - jaeger
+      - prometheus
       
   api-bixi:
     build: ./bixi/
@@ -19,7 +32,7 @@ services:
     environment:
       JAEGER_URI: ${JAEG_URI}
     ports:
-      - 3002:3002
+      - 4002:4002
     depends_on:
       - loki
       - jaeger

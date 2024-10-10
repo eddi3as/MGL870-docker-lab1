@@ -25,16 +25,25 @@ scrape_configs:
     - targets: ['prometheus:9090']
       labels:
         alias: 'prometheus'
+
   - job_name: 'cadvisor'
     static_configs:
     - targets: ['cadvisor:8080']
       labels:
         alias: 'cadvisor'
+
   - job_name: 'node-gateway'
     static_configs:
     - targets: ['apigateway:4000']
       labels:
         alias: 'node-gateway'
+
+  - job_name: 'node-auth'
+    static_configs:
+    - targets: ['apiauth:4001']
+      labels:
+        alias: 'node-auth'
+        
   - job_name: 'node-bixi'
     static_configs:
     - targets: ['apibixi:4002']

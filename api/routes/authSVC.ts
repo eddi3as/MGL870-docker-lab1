@@ -4,6 +4,7 @@ import { l_log } from "../utils/logger";
 
 export class AuthRouter {
   private _router: Router;
+  private auth_url: string;
   
   get router() {
     return this._router;
@@ -15,6 +16,7 @@ export class AuthRouter {
    constructor() {
     this._router = Router();
     this.init();
+    this.auth_url = process.env.BASE_AUTH_URL || 'http://apiauth:4001/api';
   }
 
   /**
@@ -25,7 +27,7 @@ export class AuthRouter {
     const pswd = req.body.pswd;
     let token = null;
     try {
-        const res = await axios.post(process.env.BASE_AUTH_URL + `/authentifier`, { uname: uname, pswd: pswd });
+        const res = await axios.post(this.auth_url + `/authentifier`, { uname: uname, pswd: pswd });
         token = res.data;
         l_log.info({ message: 'Login success' , origin: 'gateway-authentifier', params: req.url.toString() });
     } catch (e) {
@@ -50,7 +52,7 @@ export class AuthRouter {
     const token = req.body.token;
     let result = null;
     try {
-        const res = await axios.post(process.env.BASE_AUTH_URL + `/verifiertoken`, { uname: uname, token: token });
+        const res = await axios.post(this.auth_url + `/verifiertoken`, { uname: uname, token: token });
         result = res.data;
     } catch (e) {
         // Handle errors
@@ -72,7 +74,7 @@ export class AuthRouter {
   public async logout(req: Request, res: Response, next: NextFunction){
     let msg = null;
     try {
-        const res = await axios.post(process.env.BASE_AUTH_URL + `/logout`, { session: null });
+        const res = await axios.post(this.auth_url + `/logout`, { session: null });
         msg = res.data.result;
         l_log.info({ message: 'Logout success' , origin: 'gateway-authentifier', params: req.url.toString() });
     } catch (e) {
