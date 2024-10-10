@@ -1,0 +1,1 @@
+{"version":"1.0.0","name":"lab2","dependencies":{"body-parser":{"version":"1.20.0"},"copyfiles":{"version":"2.4.1"},"cors":{"version":"2.8.5"},"dotenv":{"version":"16.0.1"},"express":{"version":"4.18.1"},"mongoose":{"version":"6.3.6"},"morgan":{"version":"1.10.0"},"shx":{"version":"0.3.4"},"typescript":{"version":"4.7.3"}}}

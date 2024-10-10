@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { PointInteretCtrl } from '../controller/pointinteretCtrl'
 import PointInteret from '../models/pointinteret'
 import { databaseResponseTimeHistogram } from "../utils/metrics";
+import { l_log } from "../utils/logger";
 
 export class PointInteretRouter {
   private _router: Router;
@@ -42,6 +43,7 @@ export class PointInteretRouter {
       timer({ ...metricsLabels, success: "true" });
     }catch(e){
       timer({ ...metricsLabels, success: "false" });
+      l_log.error({ message: e , origin: 'getAllPointsInteret', params: req.url.toString() });
       throw e;
     }
 
@@ -73,6 +75,7 @@ export class PointInteretRouter {
       timer({ ...metricsLabels, success: "true" });
     }catch(e){
       timer({ ...metricsLabels, success: "false" });
+      l_log.error({ message: e , origin: 'getPointInteret', params: req.url.toString() });
       throw e;
     }
 
@@ -111,6 +114,7 @@ export class PointInteretRouter {
       timer({ ...metricsLabels, success: "true" });
     }catch(e){
       timer({ ...metricsLabels, success: "false" });
+      l_log.error({ message: e , origin: 'addPointInteret', params: req.url.toString() });
       throw e;
     }
 

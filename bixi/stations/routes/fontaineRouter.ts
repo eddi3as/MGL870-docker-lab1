@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { FontaineCtrl } from '../controller/fontaineCtrl'
 import Fontaine from '../models/fontaine'
 import { databaseResponseTimeHistogram } from "../utils/metrics";
+import { l_log } from "../utils/logger";
 
 export class FontaineRouter {
   private _router: Router;
@@ -37,6 +38,7 @@ export class FontaineRouter {
       timer({ ...metricsLabels, success: "true" });
     }catch(e){
       timer({ ...metricsLabels, success: "false" });
+      l_log.error({ message: e , origin: 'getAllFontaines', params: req.url.toString() });
       throw e;
     }
     
@@ -62,6 +64,7 @@ export class FontaineRouter {
       timer({ ...metricsLabels, success: "true" });
     }catch(e){
       timer({ ...metricsLabels, success: "false" });
+      l_log.error({ message: e , origin: 'getFontaine', params: req.url.toString() });
       throw e;
     }
     res.status(200)
@@ -97,6 +100,7 @@ export class FontaineRouter {
       timer({ ...metricsLabels, success: "true" });
     }catch(e){
       timer({ ...metricsLabels, success: "false" });
+      l_log.error({ message: e , origin: 'ajoutFontaine', params: req.url.toString() });
       throw e;
     }
 

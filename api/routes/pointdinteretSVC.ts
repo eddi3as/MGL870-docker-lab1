@@ -6,6 +6,7 @@ import { l_log } from "../utils/logger";
 
 export class PointInteretRouter {
   private _router: Router;
+  private auth_url: string;
 
   get router() {
     return this._router;
@@ -23,7 +24,7 @@ export class PointInteretRouter {
     let results = null;
 
     try {
-      const resdata = await axios.get(process.env.BIXI_BASE_URL + `/pointsdinteret`, 
+      const resdata = await axios.get(process.env.BIXI_SITES_BASE_URL + `/pointsdinteret`, 
         { params: { nom: nom, limite: limitParam, type: type} });
       results = resdata.data.result;
     } catch (error) {
@@ -44,7 +45,7 @@ export class PointInteretRouter {
     const limitParam = req.query.limite;
     let results = null;
     
-    let textreq = process.env.BIXI_BASE_URL + `/pointsdinteret/`+id;
+    let textreq = process.env.BIXI_SITES_BASE_URL + `/pointsdinteret/`+id;
 
     try {
       const res = await axios.get(textreq);
@@ -83,7 +84,7 @@ export class PointInteretRouter {
 
     
     try {
-      resdata = await axios.post(process.env.BIXI_BASE_URL + `/pointsdinteret`, { 
+      resdata = await axios.post(process.env.BIXI_SITES_BASE_URL + `/pointsdinteret`, { 
         id: req.body.id, neighbourhood: pointint.Arrondissement, 
         parc_name: pointint.Nom_parc_lieu, install_date: pointint.Date_installation,
         comment: pointint.Remarque, latitude: req.body.latitude, longitude: req.body.longitude,

@@ -6,6 +6,7 @@ import * as Auth from '../middleware/auth.middleware'
 
 export class FontaineRouter {
   private _router: Router;
+  private auth_url: string;
 
   get router() {
     return this._router;
@@ -23,7 +24,7 @@ export class FontaineRouter {
     let results = null;
 
     try {
-      const resdata = await axios.get(process.env.BIXI_BASE_URL + `/fontaines`);
+      const resdata = await axios.get(process.env.BIXI_STATIONS_BASE_URL + `/fontaines`);
       results = resdata.data.result;
     } catch (error) {
       // Handle errors
@@ -42,7 +43,7 @@ export class FontaineRouter {
     const id = req.params.id
     let results = null;
     
-    let textreq = process.env.BIXI_BASE_URL + `/fontaines/`+ id;
+    let textreq = process.env.BIXI_STATIONS_BASE_URL + `/fontaines/`+ id;
 
     try {
       const res = await axios.get(textreq);
@@ -77,7 +78,7 @@ export class FontaineRouter {
         req.body.longitude
     )
     try {
-      resdata = await axios.post(process.env.BIXI_BASE_URL + `/fontaines`, { 
+      resdata = await axios.post(process.env.BIXI_STATIONS_BASE_URL + `/fontaines`, { 
         id: fontaine.ID, arrondissement: fontaine.Arrondissement, 
         nom_parc_lieu: fontaine.Nom_parc_lieu, date_installation: fontaine.Date_installation,
         remarques: fontaine.Remarque, latitude: fontaine.Latitude, longitude: fontaine.Longitude });

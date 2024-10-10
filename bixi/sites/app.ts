@@ -1,8 +1,6 @@
 import express from 'express';
 import logger from 'morgan';
 import cors from 'cors';
-import { compteurRoutes } from './routes/compteurRouter';
-import { fontaineRoutes } from './routes/fontaineRouter';
 import { pointinteretRoutes } from './routes/pointdinteretRouter';
 import { restResponseTimeHistogram } from "./utils/metrics";
 import client from "prom-client";
@@ -15,7 +13,7 @@ const corsOptions = {
 const register = new client.Registry();
 
 register.setDefaultLabels({
-  app: "node-bixi",
+  app: "node-bixi-sites",
 });
 
 register.registerMetric(restResponseTimeHistogram);
@@ -23,7 +21,7 @@ register.registerMetric(restResponseTimeHistogram);
 const collectDefaultMetrics = client.collectDefaultMetrics;
 
 collectDefaultMetrics({
-    register: register, prefix: 'node_bixi_metric_'
+    register: register, prefix: 'node_bixi_sites_metric_'
 });
 // Creates and configures an ExpressJS web server.
 class App {
@@ -65,8 +63,6 @@ class App {
     });
 
     this.expressApp.use('/', router);  // routage de base
-    this.expressApp.use(this.BASE_API, compteurRoutes.router);
-    this.expressApp.use(this.BASE_API, fontaineRoutes.router);
     this.expressApp.use(this.BASE_API, pointinteretRoutes.router);
   }
 

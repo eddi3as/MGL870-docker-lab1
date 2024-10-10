@@ -16,14 +16,14 @@ const {
 
 // Create a new instance of JaegerExporter with the options
 const exporter = new JaegerExporter({
-    serviceName: "node-bixi-trace",
+    serviceName: "node-bixi-counters-trace",
     host: "jaeger", // optional, can be set by OTEL_EXPORTER_JAEGER_AGENT_HOST
 });
 
 const provider = new BasicTracerProvider({
     resource: new Resource({
         [SemanticResourceAttributes.SERVICE_NAME]:
-            "node-bixi-tracer",
+            "node-bixi-counters-tracer",
     }),
 });
 // Add the JaegerExporter to the span processor

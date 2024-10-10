@@ -44,8 +44,20 @@ scrape_configs:
       labels:
         alias: 'node-auth'
         
-  - job_name: 'node-bixi'
+  - job_name: 'bixi-counters'
     static_configs:
-    - targets: ['apibixi:4002']
+    - targets: ['apicounters:4002']
       labels:
-        alias: 'node-bixi'
+        alias: 'bixi-counters'
+        
+  - job_name: 'bixi-sites'
+    static_configs:
+    - targets: ['apisites:4003']
+      labels:
+        alias: 'bixi-sites'
+        
+  - job_name: 'bixi-stations'
+    static_configs:
+    - targets: ['apistations:4004']
+      labels:
+        alias: 'bixi-stations'

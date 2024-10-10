@@ -24,7 +24,7 @@ export class CompteurRouter {
       limit = parseInt(limitParam.toString());
 
     try {
-      const res = await axios.get(process.env.BIXI_BASE_URL + `/compteurs`);
+      const res = await axios.get(process.env.BIXI_COUNTERS_BASE_URL + `/compteurs`);
       results = res.data.result;
     } catch (error) {
       // Handle errors
@@ -44,7 +44,7 @@ export class CompteurRouter {
     let filter = { ID: parseInt(id) };
     let results = null;
     
-    let textreq = process.env.BIXI_BASE_URL + `/compteurs/`+id;
+    let textreq = process.env.BIXI_COUNTERS_BASE_URL + `/compteurs/`+id;
     try {
 
       const res = await axios.get(textreq);
@@ -74,7 +74,7 @@ export class CompteurRouter {
     if(limitParam)
       limit = parseInt(limitParam.toString());
     
-    let textreq = process.env.BIXI_BASE_URL + `/compteurs/` + id + `/passages`
+    let textreq = process.env.BIXI_COUNTERS_BASE_URL + `/compteurs/` + id + `/passages`
     try {
       const res = await axios.get(textreq, {
         params: { debut: debut, fin: fin, limite: limitParam }

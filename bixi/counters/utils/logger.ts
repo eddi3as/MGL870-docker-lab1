@@ -10,7 +10,7 @@ const myFormat = printf(({ level, origin, params, message, timestamp}) => {
 export const l_log = createLogger({
   transports: [new LokiTransport({
       host: "http://loki:3100",
-      labels: { app: 'node-bixi'},
+      labels: { app: 'node-bixi-counters'},
       json: true,
       format: combine(
         timestamp(),

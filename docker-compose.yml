@@ -1,4 +1,4 @@
-name: lab1-api-otel
+name: lab1-api
 services:
   api-gateway:
     build: ./api/
@@ -7,13 +7,14 @@ services:
       JAEGER_URI: ${JAEG_URI}
     ports:
       - 4000:4000
-    depends_on:
-      - loki
-      - jaeger
-      - prometheus
-      - api-bixi
-      - api-auth
-
+    restart: on-failure:5 
+    healthcheck:
+      test: curl -f ${API_GATEWAY_URL}
+      interval: 30s
+      retries: 25
+      start_period: 20s
+      timeout: 10s
+      
   api-auth:
     build: ./auth/
     container_name: apiauth
@@ -25,10 +26,16 @@ services:
       - loki
       - jaeger
       - prometheus
+    healthcheck:
+      test: curl -f ${API_AUTH_URL}
+      interval: 30s
+      retries: 25
+      start_period: 20s
+      timeout: 10s
       
-  api-bixi:
-    build: ./bixi/
-    container_name: apibixi
+  api-counters:
+    build: ./bixi/counters/
+    container_name: bixicounters
     environment:
       JAEGER_URI: ${JAEG_URI}
     ports:
@@ -37,6 +44,48 @@ services:
       - loki
       - jaeger
       - prometheus
+    healthcheck:
+      test: curl -f ${API_BIXI_COUNTERS_URL}
+      interval: 30s
+      retries: 25
+      start_period: 20s
+      timeout: 10s
+      
+  api-sites:
+    build: ./bixi/sites/
+    container_name: bixisites
+    environment:
+      JAEGER_URI: ${JAEG_URI}
+    ports:
+      - 4003:4003
+    depends_on:
+      - loki
+      - jaeger
+      - prometheus
+    healthcheck:
+      test: curl -f ${API_BIXI_SITES_URL}
+      interval: 30s
+      retries: 25
+      start_period: 20s
+      timeout: 10s
+      
+  api-stations:
+    build: ./bixi/stations/
+    container_name: bixistations
+    environment:
+      JAEGER_URI: ${JAEG_URI}
+    ports:
+      - 4004:4004
+    depends_on:
+      - loki
+      - jaeger
+      - prometheus
+    healthcheck:
+      test: curl -f ${API_BIXI_STATIONS_URL}
+      interval: 30s
+      retries: 25
+      start_period: 20s
+      timeout: 10s
 
   prometheus:
     image: prom/prometheus

@@ -1,8 +1,11 @@
+import debug from 'debug';
 import App from './app';
-import { connectToDatabase } from "./services/dbservice"
-import { Utils } from "./utils/utils"
+import { connectToDatabase } from "./service/database.service"
+import { Utils } from './utils/utils'
 
-const port = Number.parseInt(process.env.PORT || '4001');
+debug('ts-express:server');
+
+const port = Number.parseInt(process.env.PORT || '4003');
 if (Number.isNaN(port)) {
   console.error('PORT must be a number');
   process.exit(1);
@@ -10,7 +13,7 @@ if (Number.isNaN(port)) {
 
 connectToDatabase().then(()=>{
     let server = App.listen(port, async () => {
-      console.info(`Serveur disponible à http://localhost:${port}`);
+        console.info(`Serveur disponible à http://localhost:${port}`);
       });
     server.on('error', onError);
 }).catch((error: Error) => {
