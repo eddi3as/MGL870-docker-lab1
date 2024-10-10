@@ -1,7 +1,20 @@
-name: chaos-test-lab1
+name: apigateway-add-lab1
 services:
-  api-bixi:
+  api-gateway:
     build: ./api/
+    container_name: apigateway
+    environment:
+      JAEGER_URI: ${JAEG_URI}
+    ports:
+      - 4000:4000
+    depends_on:
+      - loki
+      - jaeger
+      - prometheus
+      - api-bixi
+      
+  api-bixi:
+    build: ./bixi/
     container_name: apibixi
     environment:
       JAEGER_URI: ${JAEG_URI}

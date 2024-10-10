@@ -26,7 +26,7 @@ use a terminal to import excel for fontaines and compteurs <b> use the csv from 
 #### run commands:
     npm install
     npm run build
-    npm run start
+    npm run start (or run start-dev for dev)
 ##### You should get:
     Successfully connected to database: gti525 and collection: stats
     waiting for localhost...

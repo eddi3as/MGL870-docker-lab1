@@ -1,12 +1,11 @@
 import express from 'express';
 import logger from 'morgan';
 import cors from 'cors';
-import client from 'prom-client';
-import api from '@opentelemetry/api';
-import { compteurRoutes } from './routes/compteurSVC';
-import { authRoutes } from './routes/authSVC';
-import { fontaineRoutes } from './routes/fontaineSVC';
-import { pointinteretRoutes } from './routes/pointdinteretSVC';
+import { compteurRoutes } from './routes/compteurRouter';
+import { fontaineRoutes } from './routes/fontaineRouter';
+import { pointinteretRoutes } from './routes/pointdinteretRouter';
+import { restResponseTimeHistogram } from "./utils/metrics";
+import client from "prom-client";
 
 const path = __dirname + '/views/';
 const corsOptions = {
@@ -16,35 +15,26 @@ const corsOptions = {
 const register = new client.Registry();
 
 register.setDefaultLabels({
-  app: "node-api-gateway",
+  app: "node-bixi",
 });
 
-const http_request_counter = new client.Counter({
-  name: 'node_api_gateway_http_request_count',
-  help: 'Count of HTTP requests',
-  labelNames: ['method', 'route', 'statusCode']
-});
-
-register.registerMetric(http_request_counter);
+register.registerMetric(restResponseTimeHistogram);
 
 const collectDefaultMetrics = client.collectDefaultMetrics;
 
 collectDefaultMetrics({
-    register: register, prefix: 'api_gateway_metric_'
+    register: register, prefix: 'node_bixi_metric_'
 });
-
-
-
+// Creates and configures an ExpressJS web server.
 class App {
   public expressApp: express.Application;
-  private BASE_API =  '/api/v1';
+  private BASE_API =  '/gti525/v1';
 
   constructor() {
     this.expressApp = express();
     this.middleware();
     this.routes();
   }
-  
 
   private middleware(): void {
     this.expressApp.use(logger('dev') as express.RequestHandler);
@@ -70,27 +60,11 @@ class App {
     });
 
     router.get("/metrics", async (req, res) => {
-      res.setHeader("Content-Type", client.register.contentType);
-      let metrics = await register.metrics();
-      res.send(metrics);
-    });
-
-    router.use("/*", function(req, res, next) {
-        http_request_counter.labels({
-            method: req.method,
-            route: req.originalUrl,
-            statusCode: res.statusCode
-        }).inc();
-
-        const activeSpan = api.trace.getSpan(api.context.active());
-        res.header("trace-id", activeSpan?.spanContext().traceId);
-        
-        console.log(register.metrics());
-        next();
+      res.set("Content-Type", client.register.contentType);
+      return res.send(await client.register.metrics());
     });
 
     this.expressApp.use('/', router);  // routage de base
-    this.expressApp.use(this.BASE_API, authRoutes.router);
     this.expressApp.use(this.BASE_API, compteurRoutes.router);
     this.expressApp.use(this.BASE_API, fontaineRoutes.router);
     this.expressApp.use(this.BASE_API, pointinteretRoutes.router);
@@ -99,3 +73,8 @@ class App {
 }
 
 export default new App().expressApp;
+/*
+
+    extra_hosts:
+      host.docker.internal: host-gateway
+*/

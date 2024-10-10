@@ -1,14 +1,25 @@
+import debug from 'debug';
 import App from './app';
-require('dotenv').config();
+import { connectToDatabase } from "./service/database.service"
+import { Utils } from './utils/utils'
 
-const port = Number.parseInt(process.env.PORT || '4000');
+debug('ts-express:server');
+
+const port = Number.parseInt(process.env.PORT || '4002');
 if (Number.isNaN(port)) {
   console.error('PORT must be a number');
   process.exit(1);
 }
 
-App.listen(port, async () => {
-  console.info(`Serveur disponible à http://localhost:${port}`);
+connectToDatabase().then(()=>{
+    let server = App.listen(port, async () => {
+        await Utils.importCSV();
+        console.info(`Serveur disponible à http://localhost:${port}`);
+      });
+    server.on('error', onError);
+}).catch((error: Error) => {
+    console.error("Database connection failed", error);
+    process.exit();
 });
 
 

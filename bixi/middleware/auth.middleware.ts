@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import * as dotenv from "dotenv";
+import { Utils } from '../utils/utils';
 
 export const authorize = () => async (req: Request, res: Response, next: NextFunction) => {
-  dotenv.config();
-  const AUTH_TOKEN = process.env.AUTH_TOKEN || "GTI525_API_ACCESS_GRANTED";
   try {
     let apiToken = req.headers.authorization;
 
@@ -15,7 +13,7 @@ export const authorize = () => async (req: Request, res: Response, next: NextFun
         apiToken = apiToken.slice('bearer'.length).trim();
     }
 
-    const hasAccessToEndpoint = apiToken === AUTH_TOKEN;
+    const hasAccessToEndpoint = apiToken === Utils.token;
 
     if (!hasAccessToEndpoint) {
       return res.status(401).json({ message: 'No enough privileges to access endpoint' });

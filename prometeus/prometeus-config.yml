@@ -30,8 +30,13 @@ scrape_configs:
     - targets: ['cadvisor:8080']
       labels:
         alias: 'cadvisor'
+  - job_name: 'node-gateway'
+    static_configs:
+    - targets: ['apigateway:4000']
+      labels:
+        alias: 'node-gateway'
   - job_name: 'node-bixi'
     static_configs:
-    - targets: ['apibixi:3002']
+    - targets: ['apibixi:4002']
       labels:
         alias: 'node-bixi'
