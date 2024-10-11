@@ -109,8 +109,8 @@ services:
     image: prom/prometheus
     container_name: prometheus
     volumes:
-      - ./prometeus/prometeus-config.yml:/etc/prometheus/prometheus-config.yml
-      - ./prometeus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+      - ./monitoring/prometeus/prometeus-config.yml:/etc/prometheus/prometheus-config.yml
+      - ./monitoring/prometeus/alert_rules.yml:/etc/prometheus/alert_rules.yml
     ports:
       - 9090:9090
     command:
@@ -125,7 +125,7 @@ services:
     ports: 
       - '9093:9003'
     volumes:
-      - ./prometeus/alertmanager.yml:/config/alertmanager.yml
+      - ./monitoring/prometeus/alertmanager.yml:/config/alertmanager.yml
       - alertmanager-data:/data
     command: --config.file=/config/alertmanager.yml
     depends_on:
@@ -169,7 +169,7 @@ services:
     ports:
       - "3100:3100"
     volumes:
-      - ./loki/loki-config.yaml:/etc/loki/loki-config.yaml
+      - ./monitoring/loki-config.yaml:/etc/loki/loki-config.yaml
     command: -config.file=/etc/loki/loki-config.yaml
 
   jaeger:
