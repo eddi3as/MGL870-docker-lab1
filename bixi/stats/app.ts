@@ -1,7 +1,7 @@
 import express from 'express';
 import logger from 'morgan';
 import cors from 'cors';
-import { fontaineRoutes } from './routes/fontaineRouter';
+import { statsRoutes } from './routes/statsRouter';
 import { databaseResponseTimeHistogram } from "./utils/metrics";
 import client from "prom-client";
 
@@ -13,17 +13,17 @@ const corsOptions = {
 const register = new client.Registry();
 
 register.setDefaultLabels({
-  app: "node-bixi-stations",
+  app: "node-bixi-stats",
 });
 
-register.registerMetric(databaseResponseTimeHistogram);
 
+register.registerMetric(databaseResponseTimeHistogram);
 const collectDefaultMetrics = client.collectDefaultMetrics;
 
 collectDefaultMetrics({
-    register: register, prefix: 'node_bixi_stations_metric_'
+    register: register, prefix: 'node_bixi_stats_metric_'
 });
-// Creates and configures an ExpressJS web server.
+
 class App {
   public expressApp: express.Application;
   private BASE_API =  '/gti525/v1';
@@ -63,7 +63,7 @@ class App {
     });
 
     this.expressApp.use('/', router);  // routage de base
-    this.expressApp.use(this.BASE_API, fontaineRoutes.router);
+    this.expressApp.use(this.BASE_API, statsRoutes.router);
   }
 
 }

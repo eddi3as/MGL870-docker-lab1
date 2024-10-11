@@ -12,7 +12,7 @@ services:
       test: curl -f ${API_GATEWAY_URL}
       interval: 30s
       retries: 25
-      start_period: 20s
+      start_period: 25s
       timeout: 10s
       
   api-auth:
@@ -30,7 +30,7 @@ services:
       test: curl -f ${API_AUTH_URL}
       interval: 30s
       retries: 25
-      start_period: 20s
+      start_period: 25s
       timeout: 10s
       
   api-counters:
@@ -48,7 +48,7 @@ services:
       test: curl -f ${API_BIXI_COUNTERS_URL}
       interval: 30s
       retries: 25
-      start_period: 20s
+      start_period: 25s
       timeout: 10s
       
   api-sites:
@@ -66,7 +66,7 @@ services:
       test: curl -f ${API_BIXI_SITES_URL}
       interval: 30s
       retries: 25
-      start_period: 20s
+      start_period: 25s
       timeout: 10s
       
   api-stations:
@@ -84,7 +84,25 @@ services:
       test: curl -f ${API_BIXI_STATIONS_URL}
       interval: 30s
       retries: 25
-      start_period: 20s
+      start_period: 25s
+      timeout: 10s
+      
+  api-stats:
+    build: ./bixi/stats/
+    container_name: bixistats
+    environment:
+      JAEGER_URI: ${JAEG_URI}
+    ports:
+      - 4005:4005
+    depends_on:
+      - loki
+      - jaeger
+      - prometheus
+    healthcheck:
+      test: curl -f ${API_BIXI_STATS_URL}
+      interval: 30s
+      retries: 25
+      start_period: 25s
       timeout: 10s
 
   prometheus:

@@ -7,6 +7,8 @@ import { compteurRoutes } from './routes/compteurSVC';
 import { authRoutes } from './routes/authSVC';
 import { fontaineRoutes } from './routes/fontaineSVC';
 import { pointinteretRoutes } from './routes/pointdinteretSVC';
+import { statsRoutes } from './routes/statsSVC';
+import { restResponseTimeHistogram } from "./utils/metrics";
 
 const path = __dirname + '/views/';
 const corsOptions = {
@@ -26,14 +28,14 @@ const http_request_counter = new client.Counter({
 });
 
 register.registerMetric(http_request_counter);
+register.registerMetric(restResponseTimeHistogram);
+
 
 const collectDefaultMetrics = client.collectDefaultMetrics;
 
 collectDefaultMetrics({
     register: register, prefix: 'api_gateway_metric_'
 });
-
-
 
 class App {
   public expressApp: express.Application;
@@ -89,11 +91,12 @@ class App {
         next();
     });
 
-    this.expressApp.use('/', router);  // routage de base
+    this.expressApp.use('/', router);
     this.expressApp.use(this.BASE_API, authRoutes.router);
     this.expressApp.use(this.BASE_API, compteurRoutes.router);
     this.expressApp.use(this.BASE_API, fontaineRoutes.router);
     this.expressApp.use(this.BASE_API, pointinteretRoutes.router);
+    this.expressApp.use(this.BASE_API, statsRoutes.router);
   }
 
 }

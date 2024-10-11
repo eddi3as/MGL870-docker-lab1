@@ -3,10 +3,10 @@ import axios from 'axios';
 import PointInteret from '../models/pointinteret'
 import * as Auth from '../middleware/auth.middleware'
 import { l_log } from "../utils/logger";
+import { restResponseTimeHistogram } from "../utils/metrics";
 
 export class PointInteretRouter {
   private _router: Router;
-  private auth_url: string;
 
   get router() {
     return this._router;
@@ -22,6 +22,7 @@ export class PointInteretRouter {
     const limitParam = req.query.limite;
     const type = req.query.type;
     let results = null;
+    const timer = restResponseTimeHistogram.startTimer();
 
     try {
       const resdata = await axios.get(process.env.BIXI_SITES_BASE_URL + `/pointsdinteret`, 
@@ -30,6 +31,9 @@ export class PointInteretRouter {
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-getAllPointsInteret', params: req.url.toString() });
+        throw error;
+    } finally{
+        timer({ method: req.method, route: req.route.path });
     }
 
     res.status(200)
@@ -44,6 +48,7 @@ export class PointInteretRouter {
     const id = req.params.id;
     const limitParam = req.query.limite;
     let results = null;
+    const timer = restResponseTimeHistogram.startTimer();
     
     let textreq = process.env.BIXI_SITES_BASE_URL + `/pointsdinteret/`+id;
 
@@ -53,6 +58,9 @@ export class PointInteretRouter {
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-getPointInteret', params: req.url.toString() });
+        throw error;
+    } finally{
+        timer({ method: req.method, route: req.route.path });
     }
 
     res.status(200)
@@ -81,8 +89,8 @@ export class PointInteretRouter {
       req.body.type,
       req.body.adress
     );
+    const timer = restResponseTimeHistogram.startTimer();
 
-    
     try {
       resdata = await axios.post(process.env.BIXI_SITES_BASE_URL + `/pointsdinteret`, { 
         id: req.body.id, neighbourhood: pointint.Arrondissement, 
@@ -92,6 +100,9 @@ export class PointInteretRouter {
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-addPointInteret', params: req.url.toString() });
+        throw error;
+    } finally{
+        timer({ method: req.method, route: req.route.path });
     }
 
     res.status(200)

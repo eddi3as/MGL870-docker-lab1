@@ -3,10 +3,10 @@ import axios from 'axios';
 import Fontaine from '../models/fontaine'
 import { l_log } from "../utils/logger";
 import * as Auth from '../middleware/auth.middleware'
+import { restResponseTimeHistogram } from "../utils/metrics";
 
 export class FontaineRouter {
   private _router: Router;
-  private auth_url: string;
 
   get router() {
     return this._router;
@@ -22,6 +22,7 @@ export class FontaineRouter {
 
   public async getAllFontaines(req: Request, res: Response, next: NextFunction) {
     let results = null;
+    const timer = restResponseTimeHistogram.startTimer();
 
     try {
       const resdata = await axios.get(process.env.BIXI_STATIONS_BASE_URL + `/fontaines`);
@@ -29,6 +30,9 @@ export class FontaineRouter {
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-getAllFontaines', params: req.url.toString() });
+        throw error;
+    } finally { 
+        timer({ method: req.method, route: req.route.path });
     }
 
     res.status(200)
@@ -42,7 +46,7 @@ export class FontaineRouter {
   public async getFontaine(req: Request, res: Response, next: NextFunction) {
     const id = req.params.id
     let results = null;
-    
+    const timer = restResponseTimeHistogram.startTimer();
     let textreq = process.env.BIXI_STATIONS_BASE_URL + `/fontaines/`+ id;
 
     try {
@@ -51,6 +55,9 @@ export class FontaineRouter {
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-getFontaine', params: req.url.toString() });
+        throw error;
+    } finally { 
+        timer({ method: req.method, route: req.route.path });
     }
 
     res.status(200)
@@ -77,6 +84,8 @@ export class FontaineRouter {
         req.body.latitude,
         req.body.longitude
     )
+    const timer = restResponseTimeHistogram.startTimer();
+
     try {
       resdata = await axios.post(process.env.BIXI_STATIONS_BASE_URL + `/fontaines`, { 
         id: fontaine.ID, arrondissement: fontaine.Arrondissement, 
@@ -85,10 +94,10 @@ export class FontaineRouter {
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-ajoutFontaine', params: req.url.toString() });
+        throw error;
+    } finally {
+        timer({ method: req.method, route: req.route.path });
     }
-
-
-      
 
     res.status(200)
     .send({

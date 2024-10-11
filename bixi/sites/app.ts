@@ -2,7 +2,6 @@ import express from 'express';
 import logger from 'morgan';
 import cors from 'cors';
 import { pointinteretRoutes } from './routes/pointdinteretRouter';
-import { restResponseTimeHistogram } from "./utils/metrics";
 import client from "prom-client";
 
 const path = __dirname + '/views/';
@@ -15,8 +14,6 @@ const register = new client.Registry();
 register.setDefaultLabels({
   app: "node-bixi-sites",
 });
-
-register.registerMetric(restResponseTimeHistogram);
 
 const collectDefaultMetrics = client.collectDefaultMetrics;
 

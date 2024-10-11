@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import { l_log } from "../utils/logger";
+import { restResponseTimeHistogram } from "../utils/metrics";
 
 export class AuthRouter {
   private _router: Router;
@@ -26,16 +27,20 @@ export class AuthRouter {
     const uname = req.body.uname;
     const pswd = req.body.pswd;
     let token = null;
+    const timer = restResponseTimeHistogram.startTimer();
+    
     try {
         const res = await axios.post(this.auth_url + `/authentifier`, { uname: uname, pswd: pswd });
         token = res.data;
-        l_log.info({ message: 'Login success' , origin: 'gateway-authentifier', params: req.url.toString() });
+        l_log.info({ message: 'Login success: ' + uname, origin: 'gateway-authentifier', params: req.url.toString() });
     } catch (e) {
         // Handle errors
         l_log.error({ message: e , origin: 'gateway-authentifier', params: req.url.toString() });
+        throw e;
+    } finally{
+      timer({ method: req.method, route: req.route.path });
     }
-      
-    
+
       res.status(200)
       .send({
         message: 'Success',
@@ -51,12 +56,17 @@ export class AuthRouter {
     const uname = req.body.uname;
     const token = req.body.token;
     let result = null;
+    const timer = restResponseTimeHistogram.startTimer();
+
     try {
         const res = await axios.post(this.auth_url + `/verifiertoken`, { uname: uname, token: token });
         result = res.data;
     } catch (e) {
         // Handle errors
         l_log.error({ message: e , origin: 'gateway-verifyToken', params: req.url.toString() });
+        throw e;
+    } finally{
+      timer({ method: req.method, route: req.route.path });
     }
 
     res.status(200)
@@ -73,6 +83,8 @@ export class AuthRouter {
    */
   public async logout(req: Request, res: Response, next: NextFunction){
     let msg = null;
+    const timer = restResponseTimeHistogram.startTimer();
+
     try {
         const res = await axios.post(this.auth_url + `/logout`, { session: null });
         msg = res.data.result;
@@ -80,7 +92,11 @@ export class AuthRouter {
     } catch (e) {
         // Handle errors
         l_log.error({ message: e , origin: 'gateway-logout', params: req.url.toString() });
+        throw e;
+    } finally{
+      timer({ method: req.method, route: req.route.path });
     }
+
 
     res.status(200)
     .send({
