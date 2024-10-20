@@ -28,6 +28,7 @@ export class PointInteretRouter {
       const resdata = await axios.get(process.env.BIXI_SITES_BASE_URL + `/pointsdinteret`, 
         { params: { nom: nom, limite: limitParam, type: type} });
       results = resdata.data.result;
+      l_log.debug({ message: 'getAllPointsInteret success', origin: 'gateway-getAllPointsInteret', params: req.url.toString() });
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-getAllPointsInteret', params: req.url.toString() });
@@ -55,6 +56,7 @@ export class PointInteretRouter {
     try {
       const res = await axios.get(textreq);
       results = res.data.result;
+      l_log.debug({ message: 'getPointInteret success', origin: 'gateway-getPointInteret', params: req.url.toString() });
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-getPointInteret', params: req.url.toString() });
@@ -97,6 +99,7 @@ export class PointInteretRouter {
         parc_name: pointint.Nom_parc_lieu, install_date: pointint.Date_installation,
         comment: pointint.Remarque, latitude: req.body.latitude, longitude: req.body.longitude,
         type: pointint.Type, adress: pointint.Adress });
+        l_log.debug({ message: 'addPointInteret success', origin: 'gateway-addPointInteret', params: req.url.toString() });
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-addPointInteret', params: req.url.toString() });

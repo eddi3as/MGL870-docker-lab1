@@ -27,6 +27,7 @@ export class FontaineRouter {
     try {
       const resdata = await axios.get(process.env.BIXI_STATIONS_BASE_URL + `/fontaines`);
       results = resdata.data.result;
+      l_log.debug({ message: 'getAllFontaines success', origin: 'gateway-getAllFontaines', params: req.url.toString() });
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-getAllFontaines', params: req.url.toString() });
@@ -52,6 +53,7 @@ export class FontaineRouter {
     try {
       const res = await axios.get(textreq);
       results = res.data.result;
+      l_log.debug({ message: 'getFontaine success', origin: 'gateway-getFontaine', params: req.url.toString() });
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-getFontaine', params: req.url.toString() });
@@ -91,6 +93,7 @@ export class FontaineRouter {
         id: fontaine.ID, arrondissement: fontaine.Arrondissement, 
         nom_parc_lieu: fontaine.Nom_parc_lieu, date_installation: fontaine.Date_installation,
         remarques: fontaine.Remarque, latitude: fontaine.Latitude, longitude: fontaine.Longitude });
+        l_log.debug({ message: 'ajoutFontaine success', origin: 'gateway-ajoutFontaine', params: req.url.toString() });
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-ajoutFontaine', params: req.url.toString() });

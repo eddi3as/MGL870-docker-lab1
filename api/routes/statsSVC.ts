@@ -36,6 +36,7 @@ export class StatsRouter {
       });
       req.method, 
       results = res.data.result;
+      l_log.debug({ message: 'getStats success', origin: 'gateway-getStats', params: req.url.toString() });
     } catch (error) {
       l_log.error({ message: error, origin: 'gateway-getStats', params: req.url.toString() });
       throw error;

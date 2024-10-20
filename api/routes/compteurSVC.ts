@@ -28,6 +28,7 @@ export class CompteurRouter {
     try {
       const res = await axios.get(process.env.BIXI_COUNTERS_BASE_URL + `/compteurs`);
       results = res.data.result;
+      l_log.info({ message: 'allCompteurs success', origin: 'gateway-allCompteurs', params: req.url.toString() });
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-allCompteurs', params: req.url.toString() });
@@ -55,6 +56,7 @@ export class CompteurRouter {
 
       const res = await axios.get(textreq);
       results = res.data.result;
+      l_log.info({ message: 'getCompteur success', origin: 'gateway-getCompteur', params: req.url.toString() });
     } catch (error) {
       // Handle errors
         l_log.error({ message: error, origin: 'gateway-getCompteur', params: req.url.toString() });
